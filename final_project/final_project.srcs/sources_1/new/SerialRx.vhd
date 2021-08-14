@@ -91,24 +91,11 @@ begin
     end if;
 end process synchronize;
 
-
-DataRegister:
-process( Clk )
-begin
-	if rising_edge( Clk ) then
-		if (rx_load = '1') then
-			rx_reg <= '1' & data_loaded & '0';				-- load with stop & data & start
-		elsif br_tick = '1' then						-- the register is always shifting
-			rx_reg <= '1' & rx_reg(9 downto 1);			-- shift right, pull in 1s														
-		end if;														
-	end if;
-end process DataRegister;
-rx <= rx_reg(0);										-- serial output port <= lsb
-
+-- Shift and load
 ShiftCounter:
-process ( Clk )
+process ( clk )
 begin
-	if rising_edge( Clk ) then
+	if rising_edge( clk ) then
 		if (rx_load = '1') then			-- load counter with 10 when register is loaded
 			rx_ctr <= x"A";		
 		elsif br_tick = '1' then		-- count shifts (br_ticks) down to 0
@@ -122,12 +109,38 @@ begin
 end process ShiftCounter;
 rx_empty <= '1' when rx_ctr = x"0" else '0';
 
-RxControllerComb:
-process ( tx_start, tx_empty, br_tick, curr_state )
+
+DataRegister:
+process( clk )
+begin
+	if rising_edge( clk ) then
+		if (rx_load = '1') then
+			rx_reg <= '1' & data_loaded & '0';				-- load with stop & data & start
+		elsif br_tick = '1' then						-- the register is always shifting
+			rx_reg <= '1' & rx_reg(9 downto 1);			-- shift right, pull in 1s														
+		end if;														
+	end if;
+end process DataRegister;
+rx <= rx_reg(0);										-- serial output port <= lsb
+
+-- Update the current state to the next state on the rising clock edge
+CalcControllerUpdate:
+process (clk)
+begin
+    if rising_edge(clk) then
+        curr_state <= next_state;
+    end if;
+end process CalcControllerUpdate;
+
+--  Combinational logic for the calculator
+CalcControllerComb:
+process ( rx_start, rx_empty, br_tick, curr_state )
 begin
 	-- defaults
 	next_state <= curr_state;
-	rx_load <= '0';  rx_shift <= '0'; rx_done_tick <= '0';
+	rx_load <= '0';  
+	rx_shift <= '0'; 
+	rx_done_tick <= '0';
 
 	-- next state and output logic
 	case curr_state is
@@ -157,6 +170,6 @@ begin
 				then next_state <= sidle;
 			end if;
 	end case;
-end process RxControllerComb;
+end process CalcControllerComb;
 
 end Behavioral;
