@@ -1,0 +1,5 @@
+# ignore everything in the vivado project
+
+vivado_proj_asm_calc/
+
+# except
