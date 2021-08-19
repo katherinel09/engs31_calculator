@@ -1,0 +1,29 @@
+# ignore everything in the vivado project
+
+/*
+
+# except
+## this .gitignore file
+!.gitignore
+
+## the project file itself
+!/*.xpr
+
+## waveform config files
+!/*.wcfg
+
+## vhdl (including sim sources), constraints
+### (coefficients source files?)
+!/*.srcs/
+
+## coefficient files (if not tracking, check for where these get made)
+## fyi: check for where these are even generated because
+## I have no idea if they're generated in a subdirectory
+## that is ignored.
+!/**.coe
+
+## core generator files (what are these?)
+## (same as for coefficient files) fyi: check for where these are even generated because
+## I have no idea if they're generated in a subdirectory
+## that is ignored.
+!/**.xci
