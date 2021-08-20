@@ -32,7 +32,7 @@ entity lab5top is
            -- Testing ports
            clk10_p : out std_logic;				-- 10 MHz clock
            RsRx_p : out std_logic;				-- serial data stream
-		   rx_shift_p : out std_logic;			-- Rx register shift           
+		   --rx_shift_p : out std_logic;			-- Rx register shift           
 		   rx_done_tick_p : OUT  std_logic );	-- data ready
 end lab5top;
 
@@ -60,7 +60,7 @@ COMPONENT SerialRx
 	PORT(
 		Clk : IN std_logic;
 		RsRx : IN std_logic;   
-		rx_shift : out std_logic;		-- for testing      
+		--rx_shift : out std_logic;		-- for testing      
 		rx_data :  out std_logic_vector(7 downto 0);
 		rx_done_tick : out std_logic  );
 	END COMPONENT;
@@ -100,7 +100,7 @@ rx_done_tick_p <= rx_done_tick;
 Receiver: SerialRx PORT MAP(
 		Clk => clk10,				-- receiver is clocked with 10 MHz clock
 		RsRx => RsRx,
-		rx_shift => rx_shift_p,		-- testing port
+		--rx_shift => rx_shift_p,		-- testing port
 		rx_data => rx_data,
 		rx_done_tick => rx_done_tick  );
 
