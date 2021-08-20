@@ -31,7 +31,7 @@ COMPONENT SerialRx
 	PORT(
 		Clk : IN std_logic;
 		RsRx : IN std_logic;   
-		rx_shift : out std_logic;		-- for testing      
+		--rx_shift : out std_logic;		-- for testing      
 		rx_data :  out std_logic_vector(7 downto 0);
 		rx_done_tick : out std_logic  );
 	END COMPONENT;
@@ -42,7 +42,7 @@ COMPONENT SerialRx
    signal RsRx : std_logic := '1';
 
  	--Outputs
-   signal rx_shift : std_logic;
+   --signal rx_shift : std_logic;
    signal rx_data : std_logic_vector(7 downto 0);
    signal rx_done_tick : std_logic;
 
@@ -59,7 +59,7 @@ BEGIN
    uut: SerialRx PORT MAP (
           clk => clk,
           RsRx => RsRx,
-          rx_shift => rx_shift,
+          --rx_shift => rx_shift,
           rx_data => rx_data,
           rx_done_tick => rx_done_tick
         );
