@@ -61,21 +61,63 @@
   <FileSets Version="1" Minor="31">
     <FileSet Name="sources_1" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
       <Filter Type="Srcs"/>
-      <File Path="$PPRDIR/../Lab 5 UART/SerialRx.vhd">
+      <File Path="$PSRCDIR/sources_1/imports/Lab 5 UART/SerialRx.vhd">
         <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../Lab 5 UART/SerialRx.vhd"/>
+          <Attr Name="ImportTime" Val="1629143770"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/../Lab 5 UART/lab5top.vhd">
+      <File Path="$PSRCDIR/sources_1/imports/Lab 5 UART/lab5top.vhd">
         <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../Lab 5 UART/lab5top.vhd"/>
+          <Attr Name="ImportTime" Val="1629143407"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/../Lab 5 UART/SerialTx.vhd">
+      <File Path="$PSRCDIR/sources_1/imports/Lab 5 UART/SerialTx.vhd">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../Lab 5 UART/SerialTx.vhd"/>
+          <Attr Name="ImportTime" Val="1628976129"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/temp/ASCII_to_BCD.vhd">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../temp/ASCII_to_BCD.vhd"/>
+          <Attr Name="ImportTime" Val="1629483756"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/temp/BCD_to_bin.vhd">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../temp/BCD_to_bin.vhd"/>
+          <Attr Name="ImportTime" Val="1629483754"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/temp/conversions.vhd">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../temp/conversions.vhd"/>
+          <Attr Name="ImportTime" Val="1629483751"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/temp/calculations.vhd">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../temp/calculations.vhd"/>
+          <Attr Name="ImportTime" Val="1629473429"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
@@ -94,8 +136,10 @@
     </FileSet>
     <FileSet Name="sim_1" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/sim_1">
       <Filter Type="Srcs"/>
-      <File Path="$PPRDIR/../Lab 5 UART/SerialRx_tb.vhd">
+      <File Path="$PSRCDIR/sim_1/imports/Lab 5 UART/SerialRx_tb.vhd">
         <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../Lab 5 UART/SerialRx_tb.vhd"/>
+          <Attr Name="ImportTime" Val="1629143435"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
