@@ -9,9 +9,9 @@
 ##====================================================================
 ## External_Clock_Port
 ##====================================================================
-set_property PACKAGE_PIN W5 [get_ports clk_port_100MHz]							
-	set_property IOSTANDARD LVCMOS33 [get_ports clk_port_100MHz]
-	create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports clk_port_100MHz]
+set_property PACKAGE_PIN W5 [get_ports clk]							
+	set_property IOSTANDARD LVCMOS33 [get_ports clk]
+	create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports clk]
 
 ##====================================================================
 ## Switch_ports
@@ -151,7 +151,7 @@ set_property PACKAGE_PIN W5 [get_ports clk_port_100MHz]
 ## Buttons
 ##====================================================================
 ## CENTER BUTTON
-#set_property PACKAGE_PIN U18 [get_ports btnC_port]						
+#set_property PACKAGE_PIN U18 [get_ports btnC_port]
 	#set_property IOSTANDARD LVCMOS33 [get_ports btnC_port]
 ## UP BUTTON
 #set_property PACKAGE_PIN T18 [get_ports btnU_port]						
@@ -171,17 +171,17 @@ set_property PACKAGE_PIN W5 [get_ports clk_port_100MHz]
 ## Pmod Header JA
 ##====================================================================
 ##Sch name = JA1
-#set_property PACKAGE_PIN J1 [get_ports {JA_port[0]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {JA_port[0]}]
+set_property PACKAGE_PIN J1 [get_ports RsTx]					
+	set_property IOSTANDARD LVCMOS33 [get_ports RsTx]
 ##Sch name = JA2
-#set_property PACKAGE_PIN L2 [get_ports {JA_port[1]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {JA_port[1]}]
+#set_property PACKAGE_PIN L2 [get_ports clk10_p]					
+	#set_property IOSTANDARD LVCMOS33 [get_ports clk10_p]
 ##Sch name = JA3
-#set_property PACKAGE_PIN J2 [get_ports {JA_port[2]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {JA_port[2]}]
+#set_property PACKAGE_PIN J2 [get_ports rx_done_tick_p]					
+	#set_property IOSTANDARD LVCMOS33 [get_ports rx_done_tick_p]
 ##Sch name = JA4
-#set_property PACKAGE_PIN G2 [get_ports {JA_port[3]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {JA_port[3]}]
+set_property PACKAGE_PIN G2 [get_ports RsRx]					
+	set_property IOSTANDARD LVCMOS33 [get_ports RsRx]
 ##Sch name = JA7
 #set_property PACKAGE_PIN H1 [get_ports {JA_port[4]}]					
 	#set_property IOSTANDARD LVCMOS33 [get_ports {JA_port[4]}]
@@ -317,8 +317,8 @@ set_property PACKAGE_PIN W5 [get_ports clk_port_100MHz]
 ##====================================================================
 ## USB-RS232 Interface
 ##====================================================================
-#set_property PACKAGE_PIN B18 [get_ports RsRx_port]
-	#set_property IOSTANDARD LVCMOS33 [get_ports RsRx_port]
+#set_property PACKAGE_PIN B18 [get_ports RsRx]
+	#set_property IOSTANDARD LVCMOS33 [get_ports RsRx]
 #set_property PACKAGE_PIN A18 [get_ports RsTx_port]
 	#set_property IOSTANDARD LVCMOS33 [get_ports RsTx_port]
 

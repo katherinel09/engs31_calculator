@@ -67,9 +67,6 @@ architecture Behavioral of calculations is
     
     signal curr_state: state_type := waitingToStart;
     signal next_state: state_type;
-    
-
-
 begin
 
 data_registers: process(clk, num1_reg, num2_reg, operation_reg, equals_reg_output, num1_reg_en, num2_reg_en, operation_reg_en, equals_output_reg_en, overflow_en, display_en, num1_reg_clr, num2_reg_clr, operation_reg_clr, equals_output_reg_clr, overflow_clr)

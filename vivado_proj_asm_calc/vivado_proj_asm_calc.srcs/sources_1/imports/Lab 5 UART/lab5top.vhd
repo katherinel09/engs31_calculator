@@ -24,24 +24,24 @@ use IEEE.numeric_std.all;
 library UNISIM;					-- needed for the BUFG component
 use UNISIM.Vcomponents.ALL;
 
-entity lab5top is
-    Port ( Clk : in  STD_LOGIC;					-- 100 MHz board clock
-           RsRx  : in  STD_LOGIC;				-- Rx input
---		   RsTx  : out  STD_LOGIC;				-- Tx output
-           --
-           -- Testing ports
-           clk10_p : out std_logic;				-- 10 MHz clock
-           RsRx_p : out std_logic;				-- serial data stream
-		   --rx_shift_p : out std_logic;			-- Rx register shift           
-		   rx_done_tick_p : OUT  std_logic );	-- data ready
-end lab5top;
+--entity lab5top is
+--    Port ( clk : in  STD_LOGIC;					-- 100 MHz board clock
+--           RsRx  : in  STD_LOGIC;				-- Rx input
+----		   RsTx  : out  STD_LOGIC;				-- Tx output
+--           --
+--           -- Testing ports
+--           clk10_p : out std_logic;				-- 10 MHz clock
+--           RsRx_p : out std_logic;				-- serial data stream
+--		   --rx_shift_p : out std_logic;			-- Rx register shift           
+--		   rx_done_tick_p : OUT  std_logic );	-- data ready
+--end lab5top;
 
 -- This is the eventual version with transmitter included
---entity lab5top is
---    Port ( Clk : in  STD_LOGIC;
---           RsRx  : in  STD_LOGIC;
---			 RsTx  : in  STD_LOGIC );
---end lab5top;
+entity lab5top is
+    Port ( clk : in  STD_LOGIC;
+        RsRx  : in  STD_LOGIC;
+		RsTx  : out  STD_LOGIC );
+end lab5top;
 
 architecture Structural of lab5top is
 
@@ -100,23 +100,17 @@ begin
 end process Clock_divider;
 ------------------------------
 
--- Map testing signals to toplevel ports
-clk10_p <= clk_en;
-RsRx_p <= RsRx;
-rx_done_tick_p <= rx_done_tick;
-rx_done_tick <= '0';
+Receiver: SerialRx PORT MAP(
+	clk => clk10,				-- receiver is clocked with 10 MHz clock
+	RsRx => RsRx,
+	--rx_shift => rx_shift_p,		-- testing port
+	rx_data => rx_data,
+	rx_done_tick => rx_done_tick  );
 
---Receiver: SerialRx PORT MAP(
---		clk => clk10,				-- receiver is clocked with 10 MHz clock
---		RsRx => RsRx,
---		--rx_shift => rx_shift_p,		-- testing port
---		rx_data => rx_data,
---		rx_done_tick => rx_done_tick  );
-
---Transmitter: SerialTx port map(
---    clk => clk10,
---    tx_data => rx_data,
---    tx_start => rx_done_tick,
---    tx => RxTx,
---    tx_done_tick => open);
+Transmitter: SerialTx port map(
+    clk => clk10,
+    tx_data => rx_data,
+    tx_start => rx_done_tick,
+    tx => RsTx,
+    tx_done_tick => open);
 end Structural;
