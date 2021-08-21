@@ -54,27 +54,27 @@ architecture Structural of lab5top is
     -- Other signals
     signal rx_data : std_logic_vector(7 downto 0);
     signal rx_done_tick : std_logic;
+    
 -- Component declarations
-COMPONENT SerialRx
-	PORT(
-		Clk : IN std_logic;
-		RsRx : IN std_logic;   
-		--rx_shift : out std_logic;		-- for testing      
-		rx_data :  out std_logic_vector(7 downto 0);
-		rx_done_tick : out std_logic  );
-	END COMPONENT;
+    COMPONENT SerialRx
+        PORT(
+            Clk : IN std_logic;
+            RsRx : IN std_logic;   
+            --rx_shift : out std_logic;		-- for testing      
+            rx_data :  out std_logic_vector(7 downto 0);
+            rx_done_tick : out std_logic  );
+        END COMPONENT;
 
 -- Add declarations for SerialTx and Mux7seg here
-
-component SerialTx
-    port(
-        Clk : in  STD_LOGIC;
-        tx_data : in  STD_LOGIC_VECTOR (7 downto 0);
-        tx_start : in  STD_LOGIC;
-        tx : out  STD_LOGIC;					    -- to RS-232 interface
-        tx_done_tick : out  STD_LOGIC
-    );
-end component;
+    component SerialTx
+        port(
+            Clk : in  STD_LOGIC;
+            tx_data : in  STD_LOGIC_VECTOR (7 downto 0);
+            tx_start : in  STD_LOGIC;
+            tx : out  STD_LOGIC;					    -- to RS-232 interface
+            tx_done_tick : out  STD_LOGIC
+        );
+    end component;
 -------------------------
 	
 begin
@@ -91,7 +91,7 @@ Clock_divider: process(clk)
 begin
 	if rising_edge(clk) then
 	   	if clkdiv = CLOCK_DIVIDER_VALUE-1 then 
-	   		clk_en <= NOT(clk_en);		
+	   		clk_en <= NOT(clk_en);
 			clkdiv <= 0;
 		else
 			clkdiv <= clkdiv + 1;
@@ -102,16 +102,21 @@ end process Clock_divider;
 
 -- Map testing signals to toplevel ports
 clk10_p <= clk_en;
-RsRx_p <= RsRx;				
+RsRx_p <= RsRx;
 rx_done_tick_p <= rx_done_tick;
+rx_done_tick <= '0';
 
-Receiver: SerialRx PORT MAP(
-		Clk => clk10,				-- receiver is clocked with 10 MHz clock
-		RsRx => RsRx,
-		--rx_shift => rx_shift_p,		-- testing port
-		rx_data => rx_data,
-		rx_done_tick => rx_done_tick  );
+--Receiver: SerialRx PORT MAP(
+--		clk => clk10,				-- receiver is clocked with 10 MHz clock
+--		RsRx => RsRx,
+--		--rx_shift => rx_shift_p,		-- testing port
+--		rx_data => rx_data,
+--		rx_done_tick => rx_done_tick  );
 
--- Add SerialTx and Mux7seg here
-		
+--Transmitter: SerialTx port map(
+--    clk => clk10,
+--    tx_data => rx_data,
+--    tx_start => rx_done_tick,
+--    tx => RxTx,
+--    tx_done_tick => open);
 end Structural;
