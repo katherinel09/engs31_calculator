@@ -22,8 +22,11 @@
 ## that is ignored.
 !/**.coe
 
+## ignore the ip sim sources except for those below
+/*.srcs/sources_1/ip/block_mem_gen_0/*.
+
 ## core generator files (what are these?)
 ## (same as for coefficient files) fyi: check for where these are even generated because
 ## I have no idea if they're generated in a subdirectory
 ## that is ignored.
-!/**.xci
+!/*.srcs/sources_1/ip/block_mem_gen_0/*.xci
