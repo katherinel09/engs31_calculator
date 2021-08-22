@@ -50,7 +50,7 @@ architecture Behavioral of SerialRx is
 	constant CLOCK_FREQUENCY : integer := 10000000;		
 	constant BAUD_RATE : integer := 115200;
 	constant N : integer := CLOCK_FREQUENCY / BAUD_RATE;
-	signal counter_one_count: unsigned(12 downto 0) := (others => '0'); -- N/2 clock edges before the first shift and N clock edges between shifts
+	signal counter_one_count: unsigned(12 downto 0) := to_unsigned((N/2)-1, 13); -- N/2 clock edges before the first shift and N clock edges between shifts
 	signal counter_one_timeout: std_logic := '0';
 	signal first_shift_completed: std_logic := '0';
 	signal bit_clr: std_logic := '0';
@@ -77,7 +77,7 @@ architecture Behavioral of SerialRx is
 	
 	-- Controller FSM
 	type state_type is (idle, first_shift, later_shifts, load, done);	
-	signal curr_state, next_state: state_type;
+	signal curr_state, next_state: state_type := idle;
 begin
 
 -- a counter to count N/2 clock edges before the first shift and N clock edges between shifts
@@ -87,10 +87,10 @@ begin
 	if rising_edge(clk) then
 	   -- if cleared, clear the reg
 	   if baud_clr = '1' then
-            counter_one_count <= (others => '0'); 
+            counter_one_count <=  to_unsigned((N/2)-1, 13);
        -- after hitting N - 1 for the first time, only count halfway all following times
        elsif counter_one_count = N - 1 then
-            counter_one_count <= to_unsigned(N/2, counter_one_count'length);
+            counter_one_count <= (others => '0');
        -- otherwise, increment
        elsif en_counter1 = '1' then
             counter_one_count <= counter_one_count + 1;
@@ -215,7 +215,7 @@ begin
 		    en_counter1 <= '1';
 		
 			if counter_one_timeout = '1' then 
-			next_state <= later_shifts;
+			 next_state <= later_shifts;
 			end if;
 			
 	   -- shift for the appropriate amount of time
