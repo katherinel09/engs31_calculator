@@ -109,7 +109,8 @@ with muxy select segh <=
 	"1111011" when x"9",
 	"1110111" when x"a",	
 	"0011111" when x"b",	
-	"1001110" when x"c",	
+	-- "1001110" when x"c",(original version to display c)
+	"0000001" when x"c", -- display a negative sign when c is given
 	"0111101" when x"d",	
 	"1001111" when x"e",	
 	"1000111" when x"f",	
