@@ -64,7 +64,6 @@ architecture Behavioral of calculations is
     signal equals_output_reg_en : STD_LOGIC := '0';
     signal overflow_en : STD_LOGIC := '0';
     signal display_en : STD_LOGIC := '0';
-    signal overflow_en : STD_LOGIC := '0';
     
     -- Clear signals
     signal num1_reg_clr : STD_LOGIC := '0';
@@ -192,7 +191,7 @@ begin
             if (incoming_data_signal = '1' and num_symb = '1') then
                 next_state <= storeNumOne;
             -- if an operation is coming, go to the operation state
-            elsif (incoming_data_signal = '1' and op_symb = '1') then
+            elsif (incoming_data_signal = '1' and operation_symb = '1') then
                 next_state <= storeOperation;
             -- if clear is high, clear everything
             elsif (incoming_data_signal = '1' and clr_sig = '1') then
@@ -206,7 +205,7 @@ begin
 
             -- do not do anything if more operations are typed
             -- just stay in this state
-            if (incoming_data_signal = '1' and op_symb = '1') then
+            if (incoming_data_signal = '1' and operation_symb = '1') then
                 next_state <= storeOperation;
             -- if another number comes in, store the next number
             elsif (incoming_data_signal = '1' and num_symb = '1') then
@@ -224,7 +223,7 @@ begin
             if (incoming_data_signal = '1' and equals_symb = '1') then
                 next_state <= equals;
             -- otherwise is another number is typed, in, state in this state and reload 
-            if (incoming_data_signal = '1' and num_symb = '1') then
+            elsif (incoming_data_signal = '1' and num_symb = '1') then
                 next_state <= storeNumTwo;
             -- if clear is high, clear everything
             elsif (incoming_data_signal = '1' and clr_sig = '1') then
@@ -250,7 +249,7 @@ begin
 
             -- clear contents from second register since the equals reg was 
             -- loaded into reg 1
-            num2_reg_clr = '1';
+            num2_reg_clr <= '1';
 
             -- if another num symbol is hit, store it
             if (incoming_data_signal = '1' and num_symb = '1') then
