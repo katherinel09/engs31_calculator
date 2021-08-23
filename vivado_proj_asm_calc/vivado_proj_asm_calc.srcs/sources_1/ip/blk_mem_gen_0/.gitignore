@@ -1,0 +1,9 @@
+# ignore everything in this block memory module directory
+/*
+
+# except
+## this .gitignore file
+!.gitignore
+
+## core generator files for the block memory
+!/*.xci

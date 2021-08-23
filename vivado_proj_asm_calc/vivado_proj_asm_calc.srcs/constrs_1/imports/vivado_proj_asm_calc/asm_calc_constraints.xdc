@@ -47,6 +47,7 @@ set_property PACKAGE_PIN W4 [get_ports an_oport[3]]
 ## Pmod Header JA
 ##====================================================================
 ##Sch name = JA1
+## Used for serial data in from the AD2
 set_property PACKAGE_PIN J1 [get_ports RsRx]					
 	set_property IOSTANDARD LVCMOS33 [get_ports RsRx]
 
