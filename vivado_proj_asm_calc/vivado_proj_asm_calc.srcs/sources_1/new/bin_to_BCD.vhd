@@ -31,36 +31,40 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity bin_to_BCD is
     -- take in the 15 bit signed two's comp number from output and convert to BCD
-    Port ( signed_num : in STD_LOGIC_VECTOR (14 downto 0);
+    Port ( clk: in std_logic; -- clock needed for block memory
+           signed_num : in STD_LOGIC_VECTOR (14 downto 0);
            BCD_out : out STD_LOGIC_VECTOR (15 downto 0));
 end bin_to_BCD;
 
 architecture Behavioral of bin_to_BCD is
     signal sign_bit: std_logic;
-    signal magnitude: std_logic_vector(14 downto 0);
+    signal magnitude: std_logic_vector(13 downto 0);
     signal mag_BCD: std_logic_vector(15 downto 0);
     signal sign_BCD: std_logic_vector(15 downto 0);
     
     -- block memory component declaration (TODO)
---    COMPONENT blk_mem_gen_0
---    PORT (
---        clka : IN STD_LOGIC;
---        addra : IN STD_LOGIC_VECTOR(11 DOWNTO 0);
---        douta : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)  );
-    
+    COMPONENT blk_mem_gen_0
+        PORT (
+        clka : IN STD_LOGIC;
+        ena  :    IN STD_LOGIC;
+        addra : IN STD_LOGIC_VECTOR(13 DOWNTO 0);
+        douta : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
+    end component;
+
 begin
     -- assign the sign bit accordingly
     sign_bit <= signed_num(14);
     -- just the magnitude part, truncated down to 14 bits for use in addressing
     magnitude <= std_logic_vector(resize(abs(signed(signed_num)), 14));
     
-    -- block memory initialization declaration (TODO)
---adc_data_to_measured_voltage : blk_mem_gen_0
-  --  PORT MAP (
-   -- clka => clk_1MHz,
-    --addra => adc_data,
-   -- douta => measured_voltage);
-   
+    -- block memory initialization declaration
+    magnitude_to_bcd : blk_mem_gen_0
+        PORT MAP (
+        ena => '1', -- enable always high
+        clka => clk,
+        addra => magnitude,
+        douta => mag_BCD);
+
    -- once we have the conversion from the block ROM, put a negative sign if needed
    create_neg_sign: process(sign_bit, mag_BCD) is
    begin

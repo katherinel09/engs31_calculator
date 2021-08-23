@@ -34,12 +34,12 @@ begin
     -- process to do resizing for temporary variables
     resizing: process (BCD_dig_1, BCD_dig_2) is
     begin
-        temp_dig_1 <= signed(resize(unsigned(BCD_dig_1), 8));
+        temp_dig_1 <= signed(std_logic_vector(resize(unsigned(BCD_dig_1), 8)));
         -- if it's negative, let temp_dig_2 = -1
         if BCD_dig_2 = "1100" then
             temp_dig_2 <= to_signed(-1, 8);
         else -- otherwise it's a 10's place number, multiply by 10
-            temp_dig_2 <= signed(resize(unsigned(BCD_dig_2), 8))*10;
+            temp_dig_2 <= signed(std_logic_vector(resize(unsigned(BCD_dig_2), 8)))*10;
         end if;
     end process;
     

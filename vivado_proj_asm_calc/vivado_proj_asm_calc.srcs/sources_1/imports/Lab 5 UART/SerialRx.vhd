@@ -68,16 +68,16 @@ architecture Behavioral of SerialRx is
 	signal shift_clr: std_logic := '0';
 	
 	-- Data signals for synchronization 
-	signal rsrx_sync_reg: STD_LOGIC := '0';
-	signal data_loaded: STD_LOGIC := '0';
+	signal rsrx_sync_reg: STD_LOGIC := '1';
+	signal data_loaded: STD_LOGIC := '1';
 	
 	-- Signal registers
-	signal data_shifted_register: STD_LOGIC_VECTOR(9 downto 0); -- 10 bits for shifting
-	signal data_loaded_register: STD_LOGIC_VECTOR(7 downto 0); -- 8 bits for loading
+	signal data_shifted_register: STD_LOGIC_VECTOR(9 downto 0) := (others => '0');-- for shifting
+	signal data_loaded_register: STD_LOGIC_VECTOR(7 downto 0) := (others => '0'); -- 8 bits for loading
 	
 	-- Controller FSM
 	type state_type is (idle, first_shift, later_shifts, load, done);	
-	signal curr_state, next_state: state_type := idle;
+	signal curr_state, next_state: state_type;
 begin
 
 -- a counter to count N/2 clock edges before the first shift and N clock edges between shifts
@@ -117,7 +117,7 @@ begin
             bit_count <= (others => '0');
     	elsif bit_count = NUM_BITS - 1 then 
         	 bit_count <= (others => '0');
-        elsif en_counter1 = '1' then
+        elsif en_counter2 = '1' then
             bit_count <= bit_count + 1;
         end if;
    end if;
@@ -162,7 +162,7 @@ begin
 	if rising_edge(clk) then
 		if (load_en = '1') then
 		  -- load the data into the load register from the shift register
-		  data_loaded_register <= data_shifted_register(8 downto 1);									
+		  data_loaded_register <= data_shifted_register(9 downto 2);									
 		end if;														
 	end if;
 	
@@ -214,21 +214,23 @@ begin
 		when first_shift =>
 		    en_counter1 <= '1';
 		
-			if counter_one_timeout = '1' then 
-			 next_state <= later_shifts;
+		    if ten_bit_timeout = '1' then
+			     next_state <= load;
+			elsif counter_one_timeout = '1' then 
+			     next_state <= later_shifts;
 			end if;
 			
 	   -- shift for the appropriate amount of time
 	   when later_shifts => 
 	        --baud_clr <= '1';
-	        en_counter1 <= '1';
-		    en_counter2 <= '1';
+	        en_counter1 <= '1'; -- BAUD 
+		    en_counter2 <= '1'; -- BIT
 		    shift_en <= '1';
 		    
 			if ten_bit_timeout = '1' then
 			     next_state <= load;
-			else
-			     next_state <= first_shift;
+		    else
+			  next_state <= first_shift;
 			end if;
 		
 		-- load the register
