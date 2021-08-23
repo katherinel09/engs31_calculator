@@ -40,7 +40,10 @@ use UNISIM.Vcomponents.ALL;
 entity lab5top is
     Port ( clk : in  STD_LOGIC;
         RsRx  : in  STD_LOGIC;
-		RsTx  : out  STD_LOGIC );
+		-- seven seg output ports
+	   seg_oport		: out std_logic_vector(0 to 6);			--segment control
+	   dp_oport			: out std_logic;						--decimal point control
+	   an_oport			: out std_logic_vector(3 downto 0));  	--digit control );
 end lab5top;
 
 architecture Structural of lab5top is
@@ -64,16 +67,18 @@ architecture Structural of lab5top is
             rx_data :  out std_logic_vector(7 downto 0);
             rx_done_tick : out std_logic  );
         END COMPONENT;
-
--- Add declarations for SerialTx and Mux7seg here
-    component SerialTx
-        port(
-            Clk : in  STD_LOGIC;
-            tx_data : in  STD_LOGIC_VECTOR (7 downto 0);
-            tx_start : in  STD_LOGIC;
-            tx : out  STD_LOGIC;					    -- to RS-232 interface
-            tx_done_tick : out  STD_LOGIC
-        );
+    
+    component mux7seg is
+    Port ( clk_iport 	: in  std_logic;						-- runs on a fast (1 MHz or so) clock
+	       y3_iport 	: in  std_logic_vector (3 downto 0);	-- digits
+		   y2_iport 	: in  std_logic_vector (3 downto 0);	-- digits
+		   y1_iport		: in  std_logic_vector (3 downto 0);	-- digits
+           y0_iport 	: in  std_logic_vector (3 downto 0);	-- digits
+           dp_set_iport : in  std_logic_vector(3 downto 0);     -- decimal points
+		   
+           seg_oport 	: out std_logic_vector(0 to 6);			-- segments (a...g)
+           dp_oport 	: out std_logic;						-- decimal point
+           an_oport 	: out std_logic_vector (3 downto 0) );	-- anodes
     end component;
 -------------------------
 	
@@ -107,10 +112,15 @@ Receiver: SerialRx PORT MAP(
 	rx_data => rx_data,
 	rx_done_tick => rx_done_tick  );
 
-Transmitter: SerialTx port map(
-    clk => clk10,
-    tx_data => rx_data,
-    tx_start => rx_done_tick,
-    tx => RsTx,
-    tx_done_tick => open);
+display: mux7seg port map( 
+    clk_iport 		=> clk10,	       -- runs on the 1 MHz clock
+    y3_iport 		=> rx_data(7 downto 4), 		        
+    y2_iport 		=> rx_data(3 downto 0), 	
+    y1_iport 		=> x"0", 		
+    y0_iport 		=> x"0",		
+    dp_set_iport	=> "0000",   
+    seg_oport 		=> seg_oport,
+    dp_oport 		=> dp_oport,
+    an_oport 		=> an_oport );	
+
 end Structural;

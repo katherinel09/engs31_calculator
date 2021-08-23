@@ -115,7 +115,7 @@ begin
     	-- if cleared, reset to zero
         if bit_clr = '1' then
             bit_count <= (others => '0');
-    	elsif bit_count = NUM_BITS - 1 then 
+    	elsif bit_count = NUM_BITS then 
         	 bit_count <= (others => '0');
         elsif en_counter2 = '1' then
             bit_count <= bit_count + 1;
@@ -124,7 +124,7 @@ begin
    
    -- Asynchronous TC comparator
    -- have the timeout be asynchronous in order to decrease the amount of latency / lag
-   if bit_count = NUM_BITS - 1 then 
+   if bit_count = NUM_BITS then 
         ten_bit_timeout <= '1';
    else
         ten_bit_timeout <= '0';
@@ -162,7 +162,7 @@ begin
 	if rising_edge(clk) then
 		if (load_en = '1') then
 		  -- load the data into the load register from the shift register
-		  data_loaded_register <= data_shifted_register(9 downto 2);									
+		  data_loaded_register <= data_shifted_register(8 downto 1);									
 		end if;														
 	end if;
 	
