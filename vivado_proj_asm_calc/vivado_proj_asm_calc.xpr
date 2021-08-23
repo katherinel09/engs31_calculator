@@ -61,6 +61,14 @@
   <FileSets Version="1" Minor="31">
     <FileSet Name="sources_1" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
       <Filter Type="Srcs"/>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_proj_asm_calc/ASCII_to_BCD.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/ASCII_to_BCD.vhd"/>
+          <Attr Name="ImportTime" Val="1629648077"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <File Path="$PSRCDIR/sources_1/imports/vivado_proj_asm_calc/SerialRx.vhd">
         <FileInfo>
           <Attr Name="ImportPath" Val="$PPRDIR/SerialRx.vhd"/>
@@ -81,15 +89,6 @@
         <FileInfo>
           <Attr Name="ImportPath" Val="$PPRDIR/asm_calc_shell.vhd"/>
           <Attr Name="ImportTime" Val="1629752430"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/imports/vivado_proj_asm_calc/ASCII_to_BCD.vhd">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/ASCII_to_BCD.vhd"/>
-          <Attr Name="ImportTime" Val="1629648077"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>

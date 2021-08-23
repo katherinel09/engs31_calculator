@@ -42,15 +42,21 @@ architecture Structural of asm_calc_shell is
 
 -- component declarations
 	component SerialRx
-		PORT(
+		port(
 			Clk:			in	std_logic;
 			RsRx:			in	std_logic;
 			rx_data:		out	std_logic_vector(7 downto 0);
 			rx_done_tick:	out	std_logic);
-	END component;
+	end component;
+
+    component ASCII_to_BCD
+    port (
+        num_ASCII:  in  STD_LOGIC_VECTOR(7 downto 0);
+        num_BCD:    out STD_LOGIC_VECTOR(3 downto 0));
+    end component;
 
 	component mux7seg
-	Port ( clk_iport:		in	std_logic;						-- runs on a fast (1 MHz or so) clock
+	port ( clk_iport:		in	std_logic;						-- runs on a fast (1 MHz or so) clock
 		   y3_iport:		in	std_logic_vector(3 downto 0);	-- digits
 		   y2_iport:		in	std_logic_vector(3 downto 0);	-- digits
 		   y1_iport:		in	std_logic_vector(3 downto 0);	-- digits
@@ -86,9 +92,14 @@ begin
 --------------------------------------------------------------------------------
 	serial_receiver: SerialRx port map(
 		clk				=>	clk10, 		-- receiver is set up to take a 10 MHz clock
-		RsRx			=>	RsRx,
+		RsRx			=>	ser_in,
 		rx_data			=>	rx_data,
 		rx_done_tick	=>	rx_done_tick);
+	
+	ascii_conversion: ASCII_to_BCD port map(
+	    num_ASCII  => rx_data,
+	    num_BCD    => open -- TODO: change to actual wiring later
+	);
 
 	display: mux7seg port map(
 		clk_iport 		=>	clk10,		-- TODO: designed to run on a 1 MHz clock
