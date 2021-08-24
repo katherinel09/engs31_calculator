@@ -36,7 +36,7 @@ entity mux7seg is
 end mux7seg;
 
 architecture Behavioral of mux7seg is
-	constant NCLKDIV:     integer := 11;                     -- 1 MHz / 2^18 = 381 Hz
+	constant NCLKDIV:     integer := 15;                     -- 1 MHz / 2^18 = 381 Hz
     constant MAXCLKDIV:   integer := 2**NCLKDIV-1;           -- max count of clock divider
     signal cdcount:       unsigned(NCLKDIV-1 downto 0);      -- clock divider counter register
     signal CE :           std_logic;                         -- clock enable
