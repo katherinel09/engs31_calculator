@@ -16,14 +16,9 @@
 ### (coefficients source files?)
 !/*.srcs/
 
-## coefficient files (if not tracking, check for where these get made)
-## fyi: check for where these are even generated because
-## I have no idea if they're generated in a subdirectory
-## that is ignored.
+## safety checks below
+## coefficient files
 !/**.coe
 
-## core generator files (what are these?)
-## (same as for coefficient files) fyi: check for where these are even generated because
-## I have no idea if they're generated in a subdirectory
-## that is ignored.
+## core generator files for block memory
 !/**.xci
