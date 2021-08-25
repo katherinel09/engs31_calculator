@@ -19,15 +19,9 @@
 -- 
 ----------------------------------------------------------------------------------
 
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
 
 entity calculations is
     PORT( 
@@ -46,24 +40,24 @@ entity calculations is
     
     -- output as binary code
     outgoing_data_signal: out STD_LOGIC;
-    outgoing_data_data: in STD_LOGIC_VECTOR(7 downto 0));   
+    outgoing_data_data: out STD_LOGIC_VECTOR(15 downto 0));   
+  
 end calculations;
 
 architecture Behavioral of calculations is
 
     -- Datapath registers
-    signal num1_reg: STD_LOGIC_VECTOR(7 downto 0) := (others => '0');
+    signal num1_reg: STD_LOGIC_VECTOR(15 downto 0) := (others => '0');
     signal num2_reg: STD_LOGIC_VECTOR(7 downto 0) := (others => '0');
     signal operation_reg: STD_LOGIC_VECTOR(7 downto 0) := (others => '0');
-    signal equals_reg_output: STD_LOGIC_VECTOR(7 downto 0) := (others => '0');
+    signal equals_reg_output: STD_LOGIC_VECTOR(15 downto 0) := (others => '0');
     
     -- Control signals
     signal num1_reg_en : STD_LOGIC := '0';
     signal num2_reg_en : STD_LOGIC := '0';
     signal operation_reg_en : STD_LOGIC := '0';
     signal equals_output_reg_en : STD_LOGIC := '0';
-    signal overflow_en : STD_LOGIC := '0';
-    signal display_en : STD_LOGIC := '0';
+	signal overflow_en: STD_LOGIC := '0'; -- if greater than 9999 = 0b10011100001111 (15 bits) or less than -999 (1b1111100111) (11 bits)
     
     -- Clear signals
     signal num1_reg_clr : STD_LOGIC := '0';
@@ -72,9 +66,11 @@ architecture Behavioral of calculations is
     signal equals_output_reg_clr : STD_LOGIC := '0';
     signal overflow_clr : STD_LOGIC := '0';
 
+  	-- display signal
+  	signal display_en: STD_LOGIC_VECTOR(1 downto 0); -- 00 => clear, 01 => display reg 1, 10 => display reg 2, 11 => overflow
+
     -- state machine types
     type state_type is (waitingToStart, clr, storeNumOne, analyzingStoreNumOne, storeNumTwo, analyzingStoreNumTwo, storeOperation, equals, waitingForNums, waitingForOperations);
-    
     signal curr_state: state_type := waitingToStart;
     signal next_state: state_type;
 begin
@@ -113,7 +109,7 @@ begin
                 equals_reg_output <= STD_LOGIC_VECTOR(signed(num1_reg) + signed(num2_reg));   
             -- Binary for the - sign
             when "00101101" =>
-                equals_reg_output <= STD_LOGIC_VECTOR(signed(num1_reg) + signed(num2_reg));
+                equals_reg_output <= STD_LOGIC_VECTOR(signed(num1_reg) - signed(num2_reg));
             -- Binary for the * sign
             when "00101010" =>
                 equals_reg_output <= STD_LOGIC_VECTOR(signed(num1_reg) * signed(num2_reg));
@@ -127,8 +123,18 @@ begin
     end if;
 
     -- Asynchronous
-    -- load the equals register into the first register
-    num1_reg <= equals_reg_output;
+     num1_reg <= equals_reg_output;
+
+    -- check for overflow
+  	if unsigned(equals_reg_output) > "010011100001111" then
+      num1_reg <= "1111111111111111"; --- FFFF
+      
+  	elsif signed(equals_reg_output) < "11111100111" then
+      num1_reg <= "1111111111111111"; --- FFFF
+    end if;
+          
+          
+
 end process data_registers;
 
 -- FSM update
@@ -150,7 +156,7 @@ begin
     operation_reg_en <= '0';
     equals_output_reg_en <= '0';    
     overflow_en <= '0';
-    display_en <= '0';
+    display_en <= "00";
     
     num1_reg_clr <= '0';
     num2_reg_clr <= '0';
@@ -169,6 +175,7 @@ begin
             operation_reg_clr <= '1';
             equals_output_reg_clr <= '1';
             overflow_clr <= '1';
+			display_en <= "00";
             
             next_state <= waitingToStart;
         
@@ -186,6 +193,7 @@ begin
         when storeNumOne  =>
             -- store the number in the register
             num1_reg_en <= '1';
+          	display_en <= "01";
             
             -- if another number symbol is inputted, re-save register 1
             if (incoming_data_signal = '1' and num_symb = '1') then
@@ -202,6 +210,7 @@ begin
         when storeOperation  =>
             -- store the operation/know what to do
             operation_reg_en <= '1';
+			display_en <= "01";
 
             -- do not do anything if more operations are typed
             -- just stay in this state
@@ -218,6 +227,7 @@ begin
         -- store the second number
         when storeNumTwo  =>
             num2_reg_en <= '1';
+			display_en <= "10";
             
             -- if the equals sign is hit, go to the equals state
             if (incoming_data_signal = '1' and equals_symb = '1') then
@@ -233,6 +243,8 @@ begin
         -- in the equals state, load the equals output reg
         when equals  =>
             equals_output_reg_en <= '1';
+			display_en <= "10";
+
             
             -- if another operation is typed, load the equals reg and go back to next state
             if (incoming_data_signal = '1' and operation_symb = '1') then
@@ -250,6 +262,7 @@ begin
             -- clear contents from second register since the equals reg was 
             -- loaded into reg 1
             num2_reg_clr <= '1';
+			display_en <= "01";
 
             -- if another num symbol is hit, store it
             if (incoming_data_signal = '1' and num_symb = '1') then
@@ -261,4 +274,23 @@ begin
     end case;
 
 end process FSM_CombLog;
+
+to7seg: process(display_en)
+begin
+      if display_en = "00" then
+        	outgoing_data_data <= (others => '0');
+        	
+        -- when first num and op is received => display num1
+        elsif display_en = "01" then
+                outgoing_data_data <= num1_reg;
+        
+		-- when second num and op is received display num2 reg
+        elsif display_en = "10" then
+                outgoing_data_data <= num2_reg;
+        
+        else
+          	     outgoing_data_data <= num1_reg; -- should contain FFFF in this register
+        
+      end if;
+end process to7seg;
 end Behavioral;

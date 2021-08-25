@@ -40,6 +40,10 @@ architecture Structural of asm_calc_shell is
 	
 	-- signal for ASCII to BCD output
 	signal uart_bcd:	std_logic_vector(3 downto 0);
+	signal num_ready_sig:	STD_LOGIC; -- asserts a number has entered the chat
+	signal neg_ready_sig:	STD_LOGIC; -- asserts that a negative sign has been added to the chat
+	signal op_ready_sig:	STD_LOGIC; -- asserts that an operation has been added to the chat
+	signal equals_ready_sig:	STD_LOGIC;
 
 -- component declarations
 	component system_clock_generator is
@@ -60,7 +64,29 @@ architecture Structural of asm_calc_shell is
 
 	component ASCII_to_BCD port(
 		num_ASCII:	in	STD_LOGIC_VECTOR(7 downto 0);
-		num_BCD:	out	STD_LOGIC_VECTOR(3 downto 0));
+		num_BCD:	out	STD_LOGIC_VECTOR(3 downto 0);
+		num_ready:	out STD_LOGIC; -- asserts a number has entered the chat
+        neg_ready: 	out STD_LOGIC; -- asserts that a negative sign has been added to the chat
+        op_ready:	out STD_LOGIC; -- asserts that an operation has been added to the chat
+        equals_ready: out STD_LOGIC);
+	end component;
+	
+	component conversions port(
+		clk:	in	STD_LOGIC;
+		num_ready:	in STD_LOGIC; -- asserts a number has entered the chat
+		neg_ready: 	in STD_LOGIC; -- asserts that a negative sign has been added to the chat
+		op_ready: in STD_LOGIC; -- asserts that an operation has been added to the chat
+		equals_ready: in STD_LOGIC; 
+		
+		data_in: 	in std_logic_vector(8 downto 0); -- BCD incoming data (either a number or an operation)
+		load_en: 	in STD_LOGIC; -- allows you to send the BCD num to the display when loaded
+		clr:	in STD_LOGIC; -- a clr signal
+		
+		data_out:	out	std_logic_vector(8 downto 0); -- still BCD when it comes out
+		isOp: out STD_LOGIC; -- tells the claculator that the outcoming data is an operation
+		isNum: out STD_LOGIC; -- tells the claculator that the outcoming data is an operation
+		isEquals: out STD_LOGIC; -- tells the claculator that the outcoming data is an operation
+		isClear: out STD_LOGIC); -- tells the claculator that the outcoming data is an operation
 	end component;
 
 	component mux7seg port(
@@ -84,11 +110,11 @@ begin
 --------------------------------------------------------------------------------
 	clocking: system_clock_generator 
 		generic map(
-			CLOCK_DIVIDER_RATIO	=>	10) -- for 10 MHz
+		CLOCK_DIVIDER_RATIO	=>	10) -- for 10 MHz
 		port map(
-			ext_clk_iport		=>	clk_100MHz,
-			system_clk_oport	=>	clk_10MHz,
-			fwd_clk_oport		=>	open);
+		ext_clk_iport		=>	clk_100MHz,
+		system_clk_oport	=>	clk_10MHz,
+		fwd_clk_oport		=>	open);
 
 	serial_receiver: SerialRx port map(
 		clk				=>	clk_10MHz, 	-- receiver is set up to take a 10 MHz clock
@@ -98,7 +124,29 @@ begin
 	
 	ascii_conversion: ASCII_to_BCD port map(
 		num_ASCII	=>	rx_data,
-		num_BCD		=>	uart_bcd);
+		num_BCD		=>	uart_bcd,
+		num_ready	=>	num_ready_sig,
+		neg_ready	=>	neg_ready_sig,
+		op_ready	=>	op_ready_sig,
+		equals_ready=>	equals_ready_sig);
+		
+	num_converter:	conversions port map(
+		clk		=>	clk_10MHz,
+		num_ready	=>	num_ready_sig, -- asserts a number has entered the chat
+		neg_ready	=>	neg_ready_sig, -- asserts that a negative sign has been added to the chat
+		op_ready	=>	op_ready_sig,
+		equals_ready=>	equals_ready_sig,
+		
+		data_in		=>	uart_bcd,
+		load_en		=>	open, -- allows you to send the BCD num to the display when loaded
+		clr			=>	open, -- a clr signal
+		
+		data_out	=>	open, -- is in binary now
+		isOp		=>	open,
+		isNum		=>	open,
+		isEquals	=>	open,
+		isClear		=>	open);
+	);
 
 	display: mux7seg port map(
 		clk_iport 		=>	clk_10MHz,		-- 10MHz clock over 2^15 = 305Hz switching
