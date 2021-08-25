@@ -34,7 +34,6 @@ entity ASCII_to_BCD is
 		neg_ready: 		out STD_LOGIC; -- asserts that a negative sign has been added to the chat
 		op_ready:		out STD_LOGIC; -- asserts that an operation has been added to the chat
 		equals_ready:	out	STD_LOGIC; -- asserted when equals is pressed
-		load:			out	std_logic; -- asserted high when "L" is pressed
 		clr:			out	std_logic);-- asserted high when "c" is pressed
 end entity;
 
@@ -49,7 +48,6 @@ begin
 		neg_ready <= '0';
 		op_ready <= '0';
 		equals_ready <= '0';
-		load <= '0';
 		clr <= '0';
 		case num_ASCII is
 			-- when we start with 0x3, the BCD is the last 4 bits if not "="
@@ -90,11 +88,6 @@ begin
 				num_BCD <= "1111"; -- clear 0xF
 				num_ready <= '0';
 				clr <= '1';
-
-			when x"4c" => 
-				num_BCD<="0000"; -- doesn't matter what it is, won't be used
-				num_ready <= '0';
-				load <= '1';
 						
 			-- last case for unknown chars is just ignore it (0xD)
 			when others => 

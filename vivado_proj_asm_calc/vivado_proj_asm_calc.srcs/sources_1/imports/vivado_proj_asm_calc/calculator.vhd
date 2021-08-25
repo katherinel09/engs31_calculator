@@ -1,10 +1,13 @@
 ----------------------------------------------------------------------------------
--- Course:	Engs 31 21X
+-- Course:			Engs 31 21X
 -- Design Name: 	calculator.vhd
 -- Module Name:		calculator
 -- Project Name:	E31 Final Project
 -- Target Devices:	Basys3 Board/Artix-7 FPGA
 -- Description:		ASM Calculator Main Controller + Datapath
+--					Written according to our drawn datapath and
+--					state diagram. Display dynamically updates with necessary
+--					output according to the state we are in.
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.std_logic_1164.ALL;
@@ -14,14 +17,14 @@ entity calculator is
 	port(
 		clk:		in	std_logic;						-- clk in (10 Mhz)
 		bcd_in:		in	std_logic_vector(3 downto 0);	-- received BCD in
-		-- which input type is it?
+		-- which input type is it? find out here!
 		is_num:		in	std_logic;
 		is_neg:		in	std_logic;
 		is_op:		in	std_logic;
 		is_equals:	in	std_logic;
 		is_clr:		in	std_logic;
-
-		rx_tick:	in	std_logic;	-- indicating a new command came in
+		-- indicating a new command came in
+		rx_tick:	in	std_logic;
 		-- 4 bcd digits routed out, displays according to state
 		bcd_out:	out	std_logic_vector(15 downto 0));
 end calculator;
@@ -66,13 +69,13 @@ architecture behavioral of calculator is
 	-- control signals for loading 1, 2, eq, op
 	signal load1, load2, loadeq, loadop:	std_logic := '0';
 
-	-- control signal for the source of loading 1 (0 is bcd_in, 1 is eq)
+	-- control signal for the source of loading num1 (0 is bcd_in, 1 is result)
 	signal sel1:	std_logic := '0';
 	
 	-- control signal for clearing only num2
 	signal clr2:	std_logic := '0';
 
-	-- control signal for clearing registers
+	-- control signal for clearing all registers
 	signal clr:		std_logic := '0';
 begin
 	-- datapath processes listed first. 
@@ -147,11 +150,12 @@ begin
 		signed_bin	=>	signed_num2
 	);
 	
-	-- the actual computation of the result
+	-- the actual mathematical computation of the result
 	compute_res: process(signed_num1, signed_num2, op)
 	begin
 		case op is
-			when x"a" =>
+			when x"a" =>	-- at this point we know signed_res is correctly holding the intended num,
+							-- but the display is cutting off any bits above 14
 				signed_res <= resize(resize(signed(signed_num1), 15) * resize(signed(signed_num2), 15), 15);
 			when x"b" =>
 				signed_res <= resize(signed(signed_num1), 15) + resize(signed(signed_num2), 15);
@@ -256,6 +260,7 @@ begin
 			when full =>
 				disp <= "11";
 				-- no way to exit this state unless clr is hit
+
 			when continue =>
 				disp <= "00";
 				sel1 <= '1';

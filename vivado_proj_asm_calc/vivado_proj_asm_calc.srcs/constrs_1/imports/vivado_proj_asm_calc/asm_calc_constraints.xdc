@@ -47,17 +47,17 @@ set_property PACKAGE_PIN W4 [get_ports an_oport[3]]
 ## Pmod Header JA
 ##====================================================================
 ##Sch name = JA1
-## Used for serial data in from the AD2
-set_property PACKAGE_PIN J1 [get_ports ser_in]					
-	set_property IOSTANDARD LVCMOS33 [get_ports ser_in]
+## Used for serial data in from the AD2, if wanted.
+#set_property PACKAGE_PIN J1 [get_ports ser_in]					
+	#set_property IOSTANDARD LVCMOS33 [get_ports ser_in]
 
 ##====================================================================
 ## USB-RS232 Interface
 ##====================================================================
-#set_property PACKAGE_PIN B18 [get_ports RsRx]
-	#set_property IOSTANDARD LVCMOS33 [get_ports RsRx]
-#set_property PACKAGE_PIN A18 [get_ports RsTx_port]
-	#set_property IOSTANDARD LVCMOS33 [get_ports RsTx_port]
+## open up PuTTY and connect to the COM port with the spec'd baud rate
+## on my PC it was COM4 with 115200 baud
+set_property PACKAGE_PIN B18 [get_ports ser_in]
+	set_property IOSTANDARD LVCMOS33 [get_ports ser_in]
 
 ##====================================================================
 ## Implementation Assist

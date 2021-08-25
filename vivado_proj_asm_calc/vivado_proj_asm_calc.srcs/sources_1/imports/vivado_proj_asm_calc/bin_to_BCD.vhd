@@ -12,22 +12,12 @@
 -- Module Name: bin_to_BCD - Behavioral
 -- 
 -- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
--- 
+-- Revision 0.01 - File Created and written out
 ----------------------------------------------------------------------------------
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
 use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
 
 entity bin_to_BCD is
     -- take in the 15 bit signed two's comp number from output and convert to BCD
@@ -42,7 +32,7 @@ architecture Behavioral of bin_to_BCD is
     signal mag_BCD: std_logic_vector(15 downto 0);
     signal sign_BCD: std_logic_vector(15 downto 0);
     
-    -- block memory component declaration (TODO)
+    -- block memory component declaration
     COMPONENT blk_mem_gen_0
         PORT (
         clka : IN STD_LOGIC;
@@ -55,6 +45,7 @@ begin
     -- assign the sign bit accordingly
     sign_bit <= signed_num(14);
     -- just the magnitude part, truncated down to 14 bits for use in addressing
+    -- may need to watch out for this, we are losing any nums > 2^13
     magnitude <= std_logic_vector(resize(abs(signed(signed_num)), 14));
     
     -- block memory initialization declaration
@@ -76,7 +67,7 @@ begin
        
        sign_BCD(11 downto 0) <= mag_BCD(11 downto 0);
    end process;
-   
+
    -- finally, assign our temp output to real output
    BCD_out <= sign_BCD;
 

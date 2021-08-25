@@ -6,19 +6,18 @@
 -- Target Devices:	Basys3 Board/Artix-7 FPGA
 -- Description:		Top-level file for our ASM Calculator
 --
--- Revision: 
+-- Revisions: 
 -- Revision 0.01 - File Created
 --		Revised (EWH) 7.19.2014 for Nexys3 board and updated lab flow
 -- Revision 1.0 - Wendell and Kat
---		Revised (Wendell) 8.24.2014 for top level file consistency
--- Additional Comments:
+--		Revised (Wendell) 8.24.2021 for top level file consistency
+-- Revision 1.1 - Wendell
+--		Revised to include calculator main module on 8.25.2021
+--		Demo'd to Prof. Hansen and Ben Dobbins on 8.25.2021
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.std_logic_1164.ALL;
 use IEEE.numeric_std.all;
-
-library UNISIM;					-- needed for the BUFG component
-use UNISIM.Vcomponents.ALL;
 
 entity asm_calc_shell is
 	port(
@@ -47,12 +46,8 @@ architecture Structural of asm_calc_shell is
 --	signal load_sig:			std_logic;
 	signal clr_sig:				std_logic;
 	
-	-- calculator output signal
+	-- calculator output signal to go to 7seg display
 	signal calc_out:		std_logic_vector(15 downto 0);
-
---	-- signals for conversion module to calculations module
---	signal conv_bin_out:	std_logic_vector(7 downto 0);
---	signal debug:			std_logic_vector(0 to 3);
 
 -- component declarations
 	component system_clock_generator is
@@ -78,7 +73,6 @@ architecture Structural of asm_calc_shell is
         neg_ready: 	out std_logic; -- asserts that a negative sign has been added to the chat
         op_ready:	out std_logic; -- asserts that an operation has been added to the chat
         equals_ready: out std_logic;
-		load:		out std_logic;
 		clr:		out std_logic);
 	end component;
 	
@@ -96,24 +90,6 @@ architecture Structural of asm_calc_shell is
 		-- 4 bcd digits routed out, displays according to state
 		bcd_out:	out	std_logic_vector(15 downto 0));
 	end component;
-	
---	component conversions port(
---		clk:		in	std_logic;
---		num_ready:	in std_logic; -- asserts a number has entered the chat
---		neg_ready: 	in std_logic; -- asserts that a negative sign has been added to the chat
---		op_ready: 	in std_logic; -- asserts that an operation has been added to the chat
---		equals_ready: in std_logic; 
-		
---		data_in: 	in std_logic_vector(3 downto 0); -- BCD incoming data (either a number or an operation)
---		load_en: 	in std_logic; -- allows you to send the BCD num to the display when loaded
---		clr:	in std_logic; -- a clr signal
-		
---		data_out:	out	std_logic_vector(7 downto 0); -- binary once it comes out
---		isOp: out std_logic; -- tells the claculator that the outcoming data is an operation
---		isNum: out std_logic; -- tells the claculator that the outcoming data is an operation
---		isEquals: out std_logic; -- tells the claculator that the outcoming data is an operation
---		isClear: out std_logic); -- tells the claculator that the outcoming data is an operation
---	end component;
 
 	component mux7seg port(
 		clk_iport:		in	std_logic;						-- runs on a fast (1 MHz or so) clock
@@ -155,7 +131,6 @@ begin
 		neg_ready	=>	neg_ready_sig,
 		op_ready	=>	op_ready_sig,
 		equals_ready=>	equals_ready_sig,
-		load		=>	open,
 		clr			=>	clr_sig);
 		
 	main_calculator: calculator port map(
@@ -171,24 +146,7 @@ begin
 		rx_tick	=>	rx_done_tick,
 		bcd_out	=>	calc_out
 	);
-		
---	num_converter:	conversions port map(
---		clk			=>	clk_10MHz,
---		num_ready	=>	num_ready_sig, -- asserts a number has entered the chat
---		neg_ready	=>	neg_ready_sig, -- asserts that a negative sign has been added to the chat
---		op_ready	=>	op_ready_sig,
---		equals_ready=>	equals_ready_sig,
-		
---		data_in		=>	uart_bcd,
---		load_en		=>	load_sig, -- allows you to send the BCD num to the display when loaded
---		clr			=>	clr_sig, -- a clr signal
-		
---		data_out	=>	conv_bin_out, -- is in binary now
---		isOp		=>	debug(2),
---		isNum		=>	debug(0),
---		isEquals	=>	debug(3),
---		isClear		=>	debug(1));
-	
+
 	display: mux7seg port map(
 		clk_iport 		=>	clk_10MHz,		-- 10MHz clock over 2^15 = 305Hz switching
 		y3_iport 		=>	calc_out(15 downto 12),
