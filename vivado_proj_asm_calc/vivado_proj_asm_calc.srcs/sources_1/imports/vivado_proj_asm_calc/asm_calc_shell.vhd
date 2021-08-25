@@ -14,7 +14,7 @@
 -- Additional Comments:
 ----------------------------------------------------------------------------------
 library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.std_logic_1164.ALL;
 use IEEE.numeric_std.all;
 
 library UNISIM;					-- needed for the BUFG component
@@ -22,8 +22,8 @@ use UNISIM.Vcomponents.ALL;
 
 entity asm_calc_shell is
 	port(
-		clk_100MHz:	in	STD_LOGIC;						-- clk in (100 Mhz)
-		ser_in:		in	STD_LOGIC;						-- Serial in
+		clk_100MHz:	in	std_logic;						-- clk in (100 Mhz)
+		ser_in:		in	std_logic;						-- Serial in
 		-- seven seg output ports
 		seg_oport:	out	std_logic_vector(0 to 6);		--segment control
 		dp_oport:	out	std_logic;						--decimal point control
@@ -38,12 +38,21 @@ architecture Structural of asm_calc_shell is
 	signal rx_data : std_logic_vector(7 downto 0);
 	signal rx_done_tick : std_logic;
 	
-	-- signal for ASCII to BCD output
-	signal uart_bcd:	std_logic_vector(3 downto 0);
-	signal num_ready_sig:	STD_LOGIC; -- asserts a number has entered the chat
-	signal neg_ready_sig:	STD_LOGIC; -- asserts that a negative sign has been added to the chat
-	signal op_ready_sig:	STD_LOGIC; -- asserts that an operation has been added to the chat
-	signal equals_ready_sig:	STD_LOGIC;
+	-- signals for ASCII to BCD output
+	signal uart_bcd:			std_logic_vector(3 downto 0);
+	signal num_ready_sig:		std_logic; -- asserts a number has entered the chat
+	signal neg_ready_sig:		std_logic; -- asserts that a negative sign has been added to the chat
+	signal op_ready_sig:		std_logic; -- asserts that an operation has been added to the chat
+	signal equals_ready_sig:	std_logic;
+--	signal load_sig:			std_logic;
+	signal clr_sig:				std_logic;
+	
+	-- calculator output signal
+	signal calc_out:		std_logic_vector(15 downto 0);
+
+--	-- signals for conversion module to calculations module
+--	signal conv_bin_out:	std_logic_vector(7 downto 0);
+--	signal debug:			std_logic_vector(0 to 3);
 
 -- component declarations
 	component system_clock_generator is
@@ -63,31 +72,48 @@ architecture Structural of asm_calc_shell is
 	end component;
 
 	component ASCII_to_BCD port(
-		num_ASCII:	in	STD_LOGIC_VECTOR(7 downto 0);
-		num_BCD:	out	STD_LOGIC_VECTOR(3 downto 0);
-		num_ready:	out STD_LOGIC; -- asserts a number has entered the chat
-        neg_ready: 	out STD_LOGIC; -- asserts that a negative sign has been added to the chat
-        op_ready:	out STD_LOGIC; -- asserts that an operation has been added to the chat
-        equals_ready: out STD_LOGIC);
+		num_ASCII:	in	std_logic_VECTOR(7 downto 0);
+		num_BCD:	out	std_logic_VECTOR(3 downto 0);
+		num_ready:	out std_logic; -- asserts a number has entered the chat
+        neg_ready: 	out std_logic; -- asserts that a negative sign has been added to the chat
+        op_ready:	out std_logic; -- asserts that an operation has been added to the chat
+        equals_ready: out std_logic;
+		load:		out std_logic;
+		clr:		out std_logic);
 	end component;
 	
-	component conversions port(
-		clk:	in	STD_LOGIC;
-		num_ready:	in STD_LOGIC; -- asserts a number has entered the chat
-		neg_ready: 	in STD_LOGIC; -- asserts that a negative sign has been added to the chat
-		op_ready: in STD_LOGIC; -- asserts that an operation has been added to the chat
-		equals_ready: in STD_LOGIC; 
-		
-		data_in: 	in std_logic_vector(8 downto 0); -- BCD incoming data (either a number or an operation)
-		load_en: 	in STD_LOGIC; -- allows you to send the BCD num to the display when loaded
-		clr:	in STD_LOGIC; -- a clr signal
-		
-		data_out:	out	std_logic_vector(8 downto 0); -- still BCD when it comes out
-		isOp: out STD_LOGIC; -- tells the claculator that the outcoming data is an operation
-		isNum: out STD_LOGIC; -- tells the claculator that the outcoming data is an operation
-		isEquals: out STD_LOGIC; -- tells the claculator that the outcoming data is an operation
-		isClear: out STD_LOGIC); -- tells the claculator that the outcoming data is an operation
+	component calculator port(
+		clk:		in	std_logic;						-- clk in (10 Mhz)
+		bcd_in:		in	std_logic_vector(3 downto 0);	-- received BCD in
+		-- which input type is it?
+		is_num:		in	std_logic;
+		is_neg:		in	std_logic;
+		is_op:		in	std_logic;
+		is_equals:	in	std_logic;
+		is_clr:		in	std_logic;
+
+		rx_tick:	in	std_logic;	-- indicating a new command came in
+		-- 4 bcd digits routed out, displays according to state
+		bcd_out:	out	std_logic_vector(15 downto 0));
 	end component;
+	
+--	component conversions port(
+--		clk:		in	std_logic;
+--		num_ready:	in std_logic; -- asserts a number has entered the chat
+--		neg_ready: 	in std_logic; -- asserts that a negative sign has been added to the chat
+--		op_ready: 	in std_logic; -- asserts that an operation has been added to the chat
+--		equals_ready: in std_logic; 
+		
+--		data_in: 	in std_logic_vector(3 downto 0); -- BCD incoming data (either a number or an operation)
+--		load_en: 	in std_logic; -- allows you to send the BCD num to the display when loaded
+--		clr:	in std_logic; -- a clr signal
+		
+--		data_out:	out	std_logic_vector(7 downto 0); -- binary once it comes out
+--		isOp: out std_logic; -- tells the claculator that the outcoming data is an operation
+--		isNum: out std_logic; -- tells the claculator that the outcoming data is an operation
+--		isEquals: out std_logic; -- tells the claculator that the outcoming data is an operation
+--		isClear: out std_logic); -- tells the claculator that the outcoming data is an operation
+--	end component;
 
 	component mux7seg port(
 		clk_iport:		in	std_logic;						-- runs on a fast (1 MHz or so) clock
@@ -104,7 +130,7 @@ architecture Structural of asm_calc_shell is
 --------------------------------------------------------------------------------
 begin
 --------------------------------------------------------------------------------
--- Any processes would go here
+-- Any processes would go here (none right now)
 
 -- Begin component wiring
 --------------------------------------------------------------------------------
@@ -128,32 +154,47 @@ begin
 		num_ready	=>	num_ready_sig,
 		neg_ready	=>	neg_ready_sig,
 		op_ready	=>	op_ready_sig,
-		equals_ready=>	equals_ready_sig);
-		
-	num_converter:	conversions port map(
-		clk		=>	clk_10MHz,
-		num_ready	=>	num_ready_sig, -- asserts a number has entered the chat
-		neg_ready	=>	neg_ready_sig, -- asserts that a negative sign has been added to the chat
-		op_ready	=>	op_ready_sig,
 		equals_ready=>	equals_ready_sig,
+		load		=>	open,
+		clr			=>	clr_sig);
 		
-		data_in		=>	uart_bcd,
-		load_en		=>	open, -- allows you to send the BCD num to the display when loaded
-		clr			=>	open, -- a clr signal
+	main_calculator: calculator port map(
+		clk		=>	clk_10MHz,
+		bcd_in	=>	uart_bcd,
 		
-		data_out	=>	open, -- is in binary now
-		isOp		=>	open,
-		isNum		=>	open,
-		isEquals	=>	open,
-		isClear		=>	open);
-	);
+		is_num	=>	num_ready_sig,
+		is_neg	=>	neg_ready_sig,
+		is_op	=>	op_ready_sig,
+		is_equals	=>	equals_ready_sig,
+		is_clr	=>	clr_sig,
 
+		rx_tick	=>	rx_done_tick,
+		bcd_out	=>	calc_out
+	);
+		
+--	num_converter:	conversions port map(
+--		clk			=>	clk_10MHz,
+--		num_ready	=>	num_ready_sig, -- asserts a number has entered the chat
+--		neg_ready	=>	neg_ready_sig, -- asserts that a negative sign has been added to the chat
+--		op_ready	=>	op_ready_sig,
+--		equals_ready=>	equals_ready_sig,
+		
+--		data_in		=>	uart_bcd,
+--		load_en		=>	load_sig, -- allows you to send the BCD num to the display when loaded
+--		clr			=>	clr_sig, -- a clr signal
+		
+--		data_out	=>	conv_bin_out, -- is in binary now
+--		isOp		=>	debug(2),
+--		isNum		=>	debug(0),
+--		isEquals	=>	debug(3),
+--		isClear		=>	debug(1));
+	
 	display: mux7seg port map(
 		clk_iport 		=>	clk_10MHz,		-- 10MHz clock over 2^15 = 305Hz switching
-		y3_iport 		=>	uart_bcd,
-		y2_iport 		=>	x"0",
-		y1_iport 		=>	x"0",
-		y0_iport 		=>	x"0",
+		y3_iport 		=>	calc_out(15 downto 12),
+		y2_iport 		=>	calc_out(11 downto 8),
+		y1_iport 		=>	calc_out(7 downto 4),
+		y0_iport 		=>	calc_out(3 downto 0),
 		dp_set_iport	=>	"0000",
 		seg_oport 		=>	seg_oport,
 		dp_oport 		=>	dp_oport,
