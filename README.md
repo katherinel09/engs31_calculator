@@ -2,7 +2,7 @@
 
 ## Katherine Lasonde and Wendell Wu
 
-## Link to Final Report (Update Final Once Completed)
+## Link to Final Report
 
 Can be found [here.](https://docs.google.com/document/d/1ZsiujrolXO6kkj2-end8q93mCXqGD-XFut6Zs9Opm08/edit?usp=sharing)
 
