@@ -36,7 +36,7 @@ architecture Behavioral of bin_to_BCD is
     COMPONENT blk_mem_gen_0
         PORT (
         clka : IN STD_LOGIC;
-        ena  :    IN STD_LOGIC;
+        ena  : IN STD_LOGIC;
         addra : IN STD_LOGIC_VECTOR(13 DOWNTO 0);
         douta : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
     end component;
@@ -45,7 +45,6 @@ begin
     -- assign the sign bit accordingly
     sign_bit <= signed_num(14);
     -- just the magnitude part, truncated down to 14 bits for use in addressing
-    -- may need to watch out for this, we are losing any nums > 2^13
     magnitude <= std_logic_vector(resize(abs(signed(signed_num)), 14));
     
     -- block memory initialization declaration
@@ -70,5 +69,4 @@ begin
 
    -- finally, assign our temp output to real output
    BCD_out <= sign_BCD;
-
 end Behavioral;

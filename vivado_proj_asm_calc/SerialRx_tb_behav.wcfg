@@ -10,15 +10,33 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="9057070000fs"></ZoomStartTime>
-      <ZoomEndTime time="169457070001fs"></ZoomEndTime>
-      <Cursor1Time time="79557070000fs"></Cursor1Time>
+      <ZoomStartTime time="310332360000fs"></ZoomStartTime>
+      <ZoomEndTime time="440332360001fs"></ZoomEndTime>
+      <Cursor1Time time="601000000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="161"></NameColumnWidth>
-      <ValueColumnWidth column_width="103"></ValueColumnWidth>
+      <ValueColumnWidth column_width="98"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="9" />
+   <wave_markers>
+      <marker time="114384140000" label="" />
+      <marker time="122784140000" label="" />
+      <marker time="131450000000" label="" />
+      <marker time="140150000000" label="" />
+      <marker time="148650000000" label="" />
+      <marker time="157350000000" label="" />
+      <marker time="165850000000" label="" />
+      <marker time="174550000000" label="" />
+      <marker time="392450000000" label="" />
+      <marker time="401050000000" label="" />
+      <marker time="409550000000" label="" />
+      <marker time="418150000000" label="" />
+      <marker time="426850000000" label="" />
+      <marker time="435450000000" label="" />
+      <marker time="443950000000" label="" />
+      <marker time="452650000000" label="" />
+   </wave_markers>
    <wvobject fp_name="/SerialRx_tb/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>

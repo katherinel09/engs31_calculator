@@ -43,7 +43,6 @@ architecture Structural of asm_calc_shell is
 	signal neg_ready_sig:		std_logic; -- asserts that a negative sign has been added to the chat
 	signal op_ready_sig:		std_logic; -- asserts that an operation has been added to the chat
 	signal equals_ready_sig:	std_logic;
---	signal load_sig:			std_logic;
 	signal clr_sig:				std_logic;
 	
 	-- calculator output signal to go to 7seg display

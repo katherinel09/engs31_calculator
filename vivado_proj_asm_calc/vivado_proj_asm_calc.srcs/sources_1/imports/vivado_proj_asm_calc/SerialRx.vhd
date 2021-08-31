@@ -20,15 +20,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
 use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
 
 entity SerialRx is
     Port (
@@ -39,8 +31,6 @@ entity SerialRx is
 end SerialRx;
 
 architecture Behavioral of SerialRx is
-	
-
     -- baud rate counter: 12 bits can handle 4800 baud at 10 MHz clock
 	signal br_cnt:		unsigned(11 downto 0) := x"000";																	
 	signal br_tick:	std_logic;
@@ -97,7 +87,7 @@ begin
        end if;
 	end if;
 	
-	   -- Asynchronous TC comparator
+   -- Asynchronous TC comparator
    -- have the timeout be asynchronous in order to decrease the amount of latency / lag
    if counter_one_count = N - 1 then 
         counter_one_timeout <= '1';
